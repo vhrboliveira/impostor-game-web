@@ -1,0 +1,69 @@
+.nav {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    'back label forward'
+    'back dots forward';
+  align-items: center;
+  column-gap: var(--space-3);
+  row-gap: var(--space-1);
+}
+
+.label {
+  grid-area: label;
+  color: var(--color-text-muted);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  text-align: center;
+}
+
+.dots {
+  display: flex;
+  grid-area: dots;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.dots > span {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-border);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.dots > span[data-active] {
+  background: var(--color-primary);
+  transform: scale(1.35);
+}
+
+.arrow {
+  display: grid;
+  place-items: center;
+  width: var(--tap-size);
+  height: var(--tap-size);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.arrow:first-child {
+  grid-area: back;
+}
+
+.arrow:last-child {
+  grid-area: forward;
+}
+
+.arrow:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
+.arrow:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}

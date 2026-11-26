@@ -1,0 +1,35 @@
+.badge {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.badge[data-tone='primary'] {
+  background: var(--color-primary-soft);
+  color: var(--color-primary-text);
+}
+
+.badge[data-tone='danger'] {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.badge[data-tone='success'] {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.badge[data-tone='gold'] {
+  background: rgb(251 191 36 / 16%);
+  color: var(--color-gold);
+}

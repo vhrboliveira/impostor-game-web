@@ -1,0 +1,66 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--gradient-surface), var(--color-surface);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+}
+
+.card[data-live] {
+  border-color: rgb(139 92 246 / 60%);
+  background:
+    linear-gradient(170deg, rgb(139 92 246 / 20%) 0%, transparent 60%), var(--color-surface);
+  box-shadow: var(--shadow-card), var(--glow-primary);
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.person {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.name {
+  max-width: 100%;
+  overflow: hidden;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.role {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.arrow {
+  color: var(--color-primary-text);
+}
+
+.question {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--color-card);
+  color: var(--color-card-text);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 800;
+  line-height: 1.25;
+}

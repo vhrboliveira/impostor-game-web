@@ -1,0 +1,95 @@
+/* The form fills the screen: fields on top, actions at the bottom within thumb reach. */
+.form {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-6);
+  text-align: left;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: auto;
+}
+
+.fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.legend {
+  margin-bottom: var(--space-2);
+  color: var(--color-text-muted);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.chips {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-2);
+}
+
+.chip {
+  display: grid;
+  place-items: center;
+  height: var(--tap-size-lg);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 800;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.chip:active {
+  transform: scale(0.94);
+}
+
+.chip[aria-pressed='true'] {
+  border-color: transparent;
+  background: var(--gradient-primary);
+  color: var(--color-primary-contrast);
+  box-shadow: var(--glow-primary);
+}
+
+.hint {
+  margin-top: calc(var(--space-4) * -1);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.error {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-weight: 700;
+}
+
+/* The room code field reads like the code: big, spaced, monospaced digits. */
+.code {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  text-align: center;
+  text-transform: uppercase;
+}

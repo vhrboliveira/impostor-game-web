@@ -1,0 +1,52 @@
+/* Floating notices at the top of the screen, below the notch. */
+.toast {
+  position: fixed;
+  top: calc(var(--safe-top) + var(--space-3));
+  right: calc(var(--safe-right) + var(--space-4));
+  left: calc(var(--safe-left) + var(--space-4));
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  max-width: 28rem;
+  margin: 0 auto;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-glass);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-pop);
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  animation: toast-in var(--duration-slow) var(--ease-spring) both;
+}
+
+.toast[data-tone='danger'] {
+  border-color: rgb(240 67 90 / 55%);
+  color: #ffc9d1;
+}
+
+button.toast {
+  cursor: pointer;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-120%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+}

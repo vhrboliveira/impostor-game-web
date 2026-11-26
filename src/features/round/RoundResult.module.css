@@ -1,0 +1,100 @@
+.hero {
+  align-items: center;
+  gap: var(--space-3);
+  padding-top: var(--space-6);
+  text-align: center;
+}
+
+/* The verdict and the rest of the result arrive once the impostor is shown. */
+.outcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  animation: rise-in var(--duration-slow) var(--ease-out) both;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  animation: rise-in var(--duration-slow) var(--ease-out) 120ms both;
+}
+
+.verdict {
+  font-size: var(--text-2xl);
+}
+
+.guess {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: rgb(0 0 0 / 22%);
+  font-weight: 700;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.votes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.votes li {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font-weight: 600;
+}
+
+.votes li[data-right] {
+  border-color: rgb(45 212 191 / 45%);
+  background: var(--color-success-soft);
+}
+
+.votes li[data-abstained] {
+  color: var(--color-text-muted);
+}
+
+.points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.points li {
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-success-soft);
+  color: var(--color-success);
+  font-family: var(--font-display);
+  font-weight: 800;
+  animation: pop-in var(--duration-slow) var(--ease-spring) both;
+}
+
+.points li span {
+  color: var(--color-text);
+}
+
+.waiting {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  min-height: var(--tap-size-lg);
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .outcome,
+  .details,
+  .points li {
+    animation: none;
+  }
+}

@@ -1,0 +1,48 @@
+.button {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: var(--tap-size);
+  height: var(--tap-size);
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-2);
+  color: var(--color-primary-text);
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.button:active {
+  transform: scale(0.9);
+}
+
+.icon {
+  display: grid;
+}
+
+.icon[data-played] {
+  animation: wiggle 420ms var(--ease-spring) both;
+}
+
+@keyframes wiggle {
+  0% {
+    transform: none;
+  }
+  30% {
+    transform: rotate(-14deg) scale(1.15);
+  }
+  60% {
+    transform: rotate(10deg) scale(1.1);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon[data-played] {
+    animation: none;
+  }
+}

@@ -1,0 +1,64 @@
+.ticket {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-4);
+  border: 1px solid rgb(139 92 246 / 45%);
+  border-radius: var(--radius-xl);
+  background:
+    linear-gradient(160deg, rgb(139 92 246 / 20%) 0%, rgb(139 92 246 / 3%) 70%),
+    var(--color-surface);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+}
+
+/* Ticket notches. */
+.ticket::before,
+.ticket::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-bg);
+  transform: translateY(-50%);
+}
+
+.ticket::before {
+  left: -0.65rem;
+}
+
+.ticket::after {
+  right: -0.65rem;
+}
+
+.caption {
+  color: var(--color-text-muted);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.code {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.char {
+  display: grid;
+  place-items: center;
+  width: 3.1rem;
+  height: 3.75rem;
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+}

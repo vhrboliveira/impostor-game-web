@@ -1,0 +1,16 @@
+/* A main action next to a short secondary one ("+1 min"). They share a row while the main label
+   fits on one line; a longer label wraps the secondary action onto its own full-width row. */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.main {
+  flex: 999 1 auto;
+  white-space: nowrap;
+}
+
+.side {
+  flex: 1 0 auto;
+}

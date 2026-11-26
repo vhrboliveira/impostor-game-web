@@ -1,0 +1,61 @@
+.trigger {
+  min-height: 2.5rem;
+  padding: 0 var(--space-3);
+  font-size: var(--text-sm);
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgb(5 5 10 / 65%);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  animation: fade-in var(--duration-base) var(--ease-out) both;
+}
+
+.sheet {
+  display: flex;
+  width: 100%;
+  max-width: 30rem;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--gutter) calc(var(--gutter) + var(--safe-bottom));
+  border-top: 1px solid rgb(240 67 90 / 50%);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-pop);
+  text-align: center;
+  animation: sheet-up var(--duration-slow) var(--ease-out) both;
+}
+
+.sheet h3 {
+  font-size: var(--text-xl);
+}
+
+.sheet p {
+  margin-bottom: var(--space-3);
+  color: var(--color-text-muted);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .sheet {
+    animation: none;
+  }
+}

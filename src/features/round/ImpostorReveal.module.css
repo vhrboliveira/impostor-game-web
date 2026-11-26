@@ -1,0 +1,178 @@
+.reveal {
+  --tone: var(--color-primary);
+
+  display: flex;
+  /* Full width, so the card keeps its size when the strip below it goes away. */
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: center;
+}
+
+.reveal[data-revealed][data-found='true'] {
+  --tone: var(--color-success);
+}
+
+.reveal[data-revealed][data-found='false'] {
+  --tone: var(--color-danger);
+}
+
+.kicker {
+  color: var(--color-text-muted);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* The photo as a big rounded card, as wide as the panel allows (up to 18rem). */
+.stage {
+  position: relative;
+  display: grid;
+  width: min(100%, 18rem);
+  aspect-ratio: 1;
+}
+
+/* A soft halo in the round's tone; it breathes while spinning and flares on the reveal. */
+.glow {
+  position: absolute;
+  inset: -1.5rem;
+  border-radius: var(--radius-xl);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--tone) 55%, transparent) 0%,
+    transparent 68%
+  );
+  animation: halo 0.9s var(--ease-out) infinite alternate;
+}
+
+.reveal[data-revealed] .glow {
+  animation: flare 0.7s var(--ease-out) both;
+}
+
+.face {
+  display: grid;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 0 0 4px var(--tone);
+  animation: flash 140ms var(--ease-out) both;
+}
+
+.reveal[data-revealed] .face {
+  animation: pop 600ms var(--ease-spring) both;
+}
+
+.mask {
+  position: absolute;
+  right: -0.6rem;
+  bottom: -0.6rem;
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-bg);
+  color: var(--tone);
+  box-shadow: 0 0 0 3px var(--tone);
+  animation: pop 500ms var(--ease-spring) 180ms both;
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.reveal[data-revealed] .name {
+  color: var(--tone);
+  animation: rise-in var(--duration-slow) var(--ease-out) both;
+}
+
+/* Every player of the round: it also loads their photos before the spotlight reaches them. */
+.strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  max-width: 20rem;
+}
+
+.strip li {
+  display: flex;
+  border-radius: var(--radius-pill);
+  opacity: 0.45;
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.strip li[data-active] {
+  opacity: 1;
+  transform: scale(1.2);
+  box-shadow: 0 0 0 2px var(--tone);
+}
+
+@keyframes flash {
+  from {
+    opacity: 0.4;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes halo {
+  from {
+    opacity: 0.35;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 0.7;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes flare {
+  0% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  100% {
+    opacity: 0.75;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glow,
+  .face,
+  .mask,
+  .name,
+  .reveal[data-revealed] .glow,
+  .reveal[data-revealed] .face,
+  .reveal[data-revealed] .name {
+    animation: none;
+  }
+}

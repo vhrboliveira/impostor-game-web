@@ -1,0 +1,142 @@
+html {
+  background: var(--color-bg);
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.45;
+  color: var(--color-text);
+  /* The "table": a violet glow on top of the midnight background. */
+  background:
+    radial-gradient(120% 60% at 50% -10%, rgb(139 92 246 / 22%) 0%, transparent 60%),
+    radial-gradient(80% 40% at 100% 110%, rgb(240 67 90 / 8%) 0%, transparent 60%), var(--color-bg);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: contain;
+}
+
+#root {
+  min-height: 100dvh;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--text-3xl);
+}
+
+h2 {
+  font-size: var(--text-2xl);
+}
+
+h3 {
+  font-size: var(--text-lg);
+}
+
+p {
+  text-wrap: pretty;
+}
+
+strong {
+  font-weight: 800;
+}
+
+a {
+  color: var(--color-primary-text);
+  font-weight: 700;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-primary-text);
+  outline-offset: 3px;
+}
+
+/* Phase transitions: one short, cheap animation (opacity + transform only). */
+.phase-enter {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  animation: phase-enter var(--duration-slow) var(--ease-out) both;
+}
+
+@keyframes phase-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Children enter one after another: set --i on each child (0, 1, 2...). */
+.stagger > * {
+  animation: rise-in var(--duration-slow) var(--ease-out) both;
+  animation-delay: calc(min(var(--i, 0), 12) * 45ms);
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+@keyframes float {
+  50% {
+    transform: translateY(-6px) rotate(var(--tilt, 0deg));
+  }
+}
+
+/* Decorative animations go away entirely for people who asked for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  .stagger > *,
+  .phase-enter {
+    animation: none;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

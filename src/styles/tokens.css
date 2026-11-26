@@ -1,0 +1,115 @@
+/*
+  Design tokens. Visual direction: midnight noir, played like a game.
+  Deep charcoal table with a violet glow, raised translucent cards, cool-white text, electric
+  violet for actions, crimson only for the impostor and destructive actions, teal for "right",
+  gold for the podium. Components use the semantic aliases, never the raw palette.
+*/
+:root {
+  color-scheme: dark;
+
+  /* Palette */
+  --color-midnight: #0b0b12;
+  --color-ink: #13131d;
+  --color-raised: #1c1c2a;
+  --color-raised-2: #262638;
+  --color-line: #33334a;
+  --color-snow: #f2f2f7;
+  --color-ash: #a3a3bd;
+  --color-violet: #8b5cf6;
+  --color-violet-light: #b9a1ff;
+  --color-violet-deep: #5b2ee0;
+  --color-crimson: #f0435a;
+  --color-teal: #2dd4bf;
+  --color-gold: #fbbf24;
+  --color-silver: #cbd5e1;
+  --color-bronze: #e0915a;
+
+  /* Semantic aliases */
+  --color-bg: var(--color-midnight);
+  --color-surface: var(--color-raised);
+  --color-surface-2: var(--color-raised-2);
+  --color-surface-glass: rgb(28 28 42 / 72%);
+  --color-border: var(--color-line);
+  --color-text: var(--color-snow);
+  --color-text-muted: var(--color-ash);
+  --color-primary: var(--color-violet);
+  --color-primary-strong: var(--color-violet-deep);
+  --color-primary-soft: rgb(139 92 246 / 16%);
+  --color-primary-text: var(--color-violet-light);
+  --color-primary-contrast: #fff;
+  --color-danger: var(--color-crimson);
+  --color-danger-soft: rgb(240 67 90 / 14%);
+  --color-success: var(--color-teal);
+  --color-success-soft: rgb(45 212 191 / 14%);
+  --color-warning: var(--color-gold);
+  --color-card: #f6f1e7;
+  --color-card-text: #17131f;
+
+  --gradient-primary: linear-gradient(135deg, #9d6bff 0%, #6d3df2 100%);
+  --gradient-danger: linear-gradient(135deg, #ff5d73 0%, #d62a46 100%);
+  --gradient-success: linear-gradient(135deg, #3ee6cf 0%, #14a896 100%);
+  --gradient-surface: linear-gradient(180deg, rgb(255 255 255 / 4%) 0%, rgb(255 255 255 / 0%) 100%);
+
+  /* Spacing (4px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 2rem;
+  --space-8: 3rem;
+  --gutter: var(--space-5);
+
+  /* Shape */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.75rem;
+  --radius-pill: 999px;
+
+  /* Depth */
+  --shadow-card: 0 1px 0 rgb(255 255 255 / 5%) inset, 0 10px 30px rgb(0 0 0 / 35%);
+  --shadow-pop: 0 18px 40px rgb(0 0 0 / 45%);
+  --glow-primary: 0 8px 28px rgb(139 92 246 / 45%);
+  --glow-danger: 0 8px 28px rgb(240 67 90 / 40%);
+  --glow-success: 0 8px 28px rgb(45 212 191 / 35%);
+
+  /* Type. System fonts keep the app light and fully offline; ui-rounded is SF Pro Rounded on
+     Apple devices. TODO: self-host one variable display font (woff2) for the final identity. */
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: ui-rounded, 'SF Pro Rounded', 'Nunito', system-ui, sans-serif;
+  --text-xs: 0.8125rem; /* 13px */
+  --text-sm: 0.9375rem; /* 15px */
+  --text-base: 1.0625rem; /* 17px: phone body text */
+  --text-lg: 1.25rem; /* 20px */
+  --text-xl: 1.5rem; /* 24px */
+  --text-2xl: 2rem; /* 32px */
+  --text-3xl: 2.5rem; /* 40px */
+  --text-display: 3.25rem; /* 52px */
+
+  /* Touch */
+  --tap-size: 3rem; /* 48px minimum target */
+  --tap-size-lg: 3.5rem; /* main actions */
+
+  /* Motion: animate only transform and opacity. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 140ms;
+  --duration-base: 260ms;
+  --duration-slow: 420ms;
+
+  /* Safe areas (notch, home indicator) */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0.01ms;
+    --duration-base: 0.01ms;
+    --duration-slow: 0.01ms;
+  }
+}

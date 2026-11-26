@@ -1,0 +1,136 @@
+.hero {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-5);
+  text-align: center;
+}
+
+/* Two face-down cards and the mask, floating gently. */
+.cards {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 12rem;
+  height: 10rem;
+  margin-bottom: var(--space-2);
+}
+
+.card {
+  position: absolute;
+  width: 5.5rem;
+  height: 7.75rem;
+  border: 2px solid rgb(255 255 255 / 12%);
+  border-radius: var(--radius-lg);
+  background:
+    repeating-linear-gradient(45deg, rgb(255 255 255 / 6%) 0 6px, transparent 6px 12px),
+    var(--gradient-primary);
+  box-shadow: var(--shadow-pop);
+  animation: float 4s ease-in-out infinite;
+}
+
+.card[data-card='left'] {
+  --tilt: -14deg;
+  transform: translateX(-2.6rem) rotate(-14deg);
+  animation-name: float-left;
+}
+
+.card[data-card='right'] {
+  --tilt: 12deg;
+  transform: translateX(2.6rem) rotate(12deg);
+  animation-name: float-right;
+  animation-delay: -2s;
+  background:
+    repeating-linear-gradient(45deg, rgb(255 255 255 / 6%) 0 6px, transparent 6px 12px),
+    var(--gradient-danger);
+}
+
+@keyframes float-left {
+  50% {
+    transform: translate(-2.6rem, -8px) rotate(-11deg);
+  }
+}
+
+@keyframes float-right {
+  50% {
+    transform: translate(2.6rem, -8px) rotate(9deg);
+  }
+}
+
+.mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 5.75rem;
+  height: 5.75rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-bg);
+  color: var(--color-text);
+  box-shadow:
+    0 0 0 3px rgb(139 92 246 / 55%),
+    var(--glow-primary);
+}
+
+.title {
+  font-size: var(--text-display);
+  line-height: 0.95;
+}
+
+.title span {
+  display: block;
+  background: linear-gradient(90deg, #c4b1ff 0%, #8b5cf6 50%, #f0435a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.subtitle {
+  max-width: 20rem;
+  color: var(--color-text-muted);
+  font-size: var(--text-lg);
+}
+
+.steps {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  text-align: left;
+  counter-reset: step;
+}
+
+.steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  counter-increment: step;
+}
+
+.steps li::before {
+  content: counter(step);
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary-soft);
+  color: var(--color-primary-text);
+  font-family: var(--font-display);
+  font-weight: 800;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    animation: none;
+  }
+}
