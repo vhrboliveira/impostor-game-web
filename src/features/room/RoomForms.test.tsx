@@ -43,6 +43,7 @@ function sentBody(fetchMock: ReturnType<typeof respondWith>): unknown {
 
 beforeEach(() => {
   window.localStorage.clear()
+  window.sessionStorage.clear()
 })
 
 afterEach(() => {

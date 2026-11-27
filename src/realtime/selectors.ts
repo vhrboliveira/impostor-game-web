@@ -5,6 +5,11 @@ export function getPlayerName(players: Player[], playerId: string): string {
   return players.find((player) => player.id === playerId)?.name ?? '?'
 }
 
+/** The players still in the room (who left stays in the snapshot only for the names). */
+export function activePlayers(players: Player[]): Player[] {
+  return players.filter((player) => !player.hasLeft)
+}
+
 /** The URL of a player's photo, or null when they have none. */
 export function avatarSrc(player: Pick<Player, 'avatarUrl'> | undefined): string | null {
   return player?.avatarUrl ? endpoints.apiPath(player.avatarUrl) : null

@@ -70,10 +70,10 @@ src/
     round/      one component per phase + the phase switch
     history/    per-player history cursor, turn card, history viewer
     scoreboard/ scoreboard / podium
-  realtime/     protocol (types + zod), socket client, room store, session, send context
+  realtime/     protocol (types + zod), socket client, room store, session, send and session contexts
   shared/       ui kit, config (env, endpoints, game rules), lib
   styles/       tokens, reset, globals
-  pwa/          service worker registration and update prompt
+  pwa/          service worker registration, update prompt, cache routes, build CSP
   dev/          screen gallery with fixtures (dev builds only)
 ```
 
@@ -151,11 +151,14 @@ The source of truth is `docs/protocol.md` in the API repository.
 - Room codes have 5 characters from `ABCDEFGHJKLMNPQRSTUVWXYZ23456789` (no I, O, 0 or 1). The
   join form drops any other character and accepts a pasted invite link (`features/room/roomCode.ts`).
 - Player names have at most 20 characters. The API upper-cases the first letter ("ana" becomes
-  "Ana") and appends a number to a taken name ("Ana 2").
+  "Ana"), refuses invisible characters and appends a number to a taken name ("Ana 2").
+- `POST` bodies are sent as `Content-Type: application/json` (the API refuses anything else with
+  `415`). The API rate-limits per client; a `429` (`rate_limited`) asks to wait a few seconds.
 - Error responses carry `{ "code": "room_not_found" }` style identifiers, translated in
   `features/room/errorMessages.ts`: `room_not_found`, `room_full`, `match_in_progress`,
   `match_finished`, `invalid_name`, `invalid_rounds`, `invalid_request`, `request_too_large`,
-  `unauthorized`, `invalid_avatar`, `avatar_locked`. A
+  `unsupported_media_type`, `rate_limited`, `unauthorized`, `invalid_avatar`, `avatar_locked`.
+  Lookups use own keys only (`Object.hasOwn`), so a code such as `constructor` is not a message. A
   request that gets no response is reported as `network_error`; anything else shows a generic
   message.
 - WebSocket errors (`{"type":"error","payload":{"code":...}}`) show for 4 seconds in
@@ -163,11 +166,28 @@ The source of truth is `docs/protocol.md` in the API repository.
   `not_enough_players`, `invalid_phase`, `not_your_turn`, `not_participant`,
   `theme_unavailable`, `invalid_vote`, `already_voted`, `not_impostor`, `invalid_guess`,
   `invalid_rounds`, `invalid_message`.
-- The session (`playerId`, token) is kept per room in `localStorage` under
-  `party:session:<CODE>`, so a reload or a suspended tab reconnects to the same seat.
-- Close codes `4401` and `4404` are final: the socket client stops (status `rejected`), the saved
+- The session (`playerId`, token) is kept per room under `party:session:<CODE>`, with the time it
+  was saved, in two places: `sessionStorage` (per tab: what this tab plays as; survives a reload)
+  and `localStorage` (shared; survives closing the app: the last session saved, adopted by a tab
+  that has none). So several tabs of one browser can be different players of the same room, and a
+  `4401` clears only that tab's session. Sessions older than 24 hours (the longest a room lives) are forgotten, and saving
+  one sweeps the expired ones (`realtime/session.ts`).
+- The live connection provides its session through `SessionContext` (`realtime/sessionContext.ts`):
+  actions that need the token (the lobby photo) use it, not storage, where another tab may have
+  stored a different session for the same room code.
+- `/room/:code` only accepts a well-formed code (anything else is the "not found" page). When the
+  player joins another room than the link's (the code field can be edited), the page moves to that
+  room.
+- Close codes `4401`, `4403` (left or removed) and `4404` are final: the socket client stops (status `rejected`), the saved
   session is cleared and the room screen shows `RoomUnavailable` (4401: join again; 4404: the room
-  is gone). Any other close reconnects with backoff.
+  is gone). The API answers `4401` for an unknown room too (it never tells whether a room exists);
+  `4404` means the room expired while connected. Any other close (`1001`, `1008`, `1011`, `1013`)
+  reconnects with backoff.
+- Leaving: "Sair da sala" (lobby footer, and the "⋯" `RoomMenu` of the match bar, which also holds
+  the host's "Encerrar partida") and the host's remove button on each lobby row open a
+  `ConfirmSheet` (`shared/ui/Sheet.tsx`) first. Leaving sends `leave_room`, forgets this tab's
+  session and goes home. Players with `hasLeft` stay in the snapshot only to resolve names:
+  `activePlayers` and `rankPlayers` leave them out of the lobby, the scoreboard and the podium.
 - Only connected players count to start a match (at least 3), like on the server.
 - Player photo (optional): the create and join forms and the lobby use `AvatarPicker` (one file
   input with `accept="image/*"` and no `capture`, so phones offer camera and gallery).
@@ -226,12 +246,36 @@ add that origin to the API's `ALLOWED_ORIGINS` (the WebSocket refuses other orig
   folder (about 5 seconds at most); the build puts them in `assets/memes/`, which the service
   worker caches on first use instead of at install.
 - The Wake Lock API has caveats on iOS: treat it as progressive enhancement.
-- The service worker caches only the app shell; `/api` and `/ws` are never cached.
+- The service worker caches only the app shell; `/api` and `/ws` are never cached. The meme route
+  matches the path of same-origin requests only (`pwa/cacheRoutes.ts`); Workbox copies the
+  function into `sw.js`, so it must not use anything outside its body.
 - Updates are announced with a prompt and applied on demand, never mid-match automatically.
+
+## Hosting
+
+The production build (`pnpm build`, the `dist/` folder) carries a Content Security Policy as a
+`<meta>` tag (`pwa/csp.ts`, injected by `vite.config.ts`; the dev server goes without it, since hot
+reload needs inline scripts). It allows only the app's own origin, plus `VITE_API_BASE_URL` and
+`VITE_WS_BASE_URL` when the API is elsewhere. A `<meta>` cannot carry everything, so the static
+host must send these headers on every response:
+
+| Header                                      | Value                                                                               |
+| ------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `Content-Security-Policy`                   | `frame-ancestors 'none'` (plus the policy of the meta tag, if the host can send it) |
+| `Strict-Transport-Security`                 | `max-age=31536000; includeSubDomains` (HTTPS only)                                  |
+| `X-Content-Type-Options`                    | `nosniff`                                                                           |
+| `Referrer-Policy`                           | `no-referrer`                                                                       |
+| `Permissions-Policy`                        | `camera=(self), microphone=(), geolocation=()`                                      |
+| `Cache-Control` on `sw.js` and `index.html` | `no-cache` (updates reach installed apps)                                           |
+
+The API and the WebSocket must be served over HTTPS/WSS too: the session token travels in the
+`Authorization` header and in the WebSocket query string (`?token=`), so the proxy in front of
+the API must not log that query string.
 
 ## Open items
 
 - Final game name, icons and a self-hosted display font.
-- Leaving a room (not defined in the API yet).
 - Server-provided remaining time for countdowns (avoids client clock skew).
 - Playwright end-to-end tests simulating several players with multiple browser contexts.
+- `pnpm-workspace.yaml` overrides `glob` to `^14.0.2` (a build-only advisory in the version
+  `workbox-build` asks for): drop the override once `workbox-build` moves past it.

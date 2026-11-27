@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { RoomSnapshot } from '@/realtime/protocol'
 import { avatarSrc } from '@/realtime/selectors'
-import { loadSession } from '@/realtime/session'
+import { useSession } from '@/realtime/sessionContext'
 import { prepareAvatar } from '@/shared/lib/avatarImage'
 import { AvatarPicker } from './AvatarPicker'
 import { describeError } from './errorMessages'
@@ -19,9 +19,9 @@ export function MyAvatar({ snapshot }: MyAvatarProps) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const me = snapshot.players.find((player) => player.id === snapshot.me.playerId)
+  const session = useSession()
 
   async function run(action: (token: string) => Promise<void>) {
-    const session = loadSession(snapshot.roomCode)
     if (!session) {
       setError(describeError(new ApiError(401, 'unauthorized')))
       return

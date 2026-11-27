@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { CLOSE_UNAUTHORIZED } from '@/realtime/socketClient'
+import { CLOSE_REMOVED, CLOSE_UNAUTHORIZED } from '@/realtime/socketClient'
 import { Button } from '@/shared/ui/Button'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { Screen } from '@/shared/ui/Screen'
@@ -8,7 +8,7 @@ import type { JoinResult } from './roomApi'
 
 interface RoomUnavailableProps {
   roomCode: string
-  /** The close code the server used: 4401 (unknown session) or 4404 (room gone). */
+  /** The close code the server used: 4401 (unknown session), 4403 (removed) or 4404 (room gone). */
   closeCode: number
   onRejoined: (result: JoinResult) => void
 }
@@ -16,6 +16,18 @@ interface RoomUnavailableProps {
 /** The server refused the connection for good; the saved session was already cleared. */
 export function RoomUnavailable({ roomCode, closeCode, onRejoined }: RoomUnavailableProps) {
   const navigate = useNavigate()
+
+  if (closeCode === CLOSE_REMOVED) {
+    return (
+      <Screen
+        kicker="Fora da sala"
+        title="Você saiu da sala"
+        subtitle="O anfitrião removeu você, ou você ficou offline por muito tempo. Para voltar, entre de novo."
+      >
+        <JoinRoomForm initialCode={roomCode} onEntered={onRejoined} />
+      </Screen>
+    )
+  }
 
   if (closeCode === CLOSE_UNAUTHORIZED) {
     return (

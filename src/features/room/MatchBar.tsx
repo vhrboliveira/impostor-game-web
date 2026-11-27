@@ -2,14 +2,14 @@ import type { RoomSnapshot } from '@/realtime/protocol'
 import { isHost } from '@/realtime/selectors'
 import { MIN_PLAYERS } from '@/shared/config/gameRules'
 import { Icon } from '@/shared/ui/Icon'
-import { EndMatchButton } from './EndMatchButton'
 import styles from './MatchBar.module.css'
+import { RoomMenu } from './RoomMenu'
 
 interface MatchBarProps {
   snapshot: RoomSnapshot
 }
 
-/** The top of every round screen: where the match is, and the host's way out. */
+/** The top of every round screen: where the match is, and the way out (leave, or end the match). */
 export function MatchBar({ snapshot }: MatchBarProps) {
   const { match, round } = snapshot
   const host = isHost(snapshot)
@@ -24,7 +24,7 @@ export function MatchBar({ snapshot }: MatchBarProps) {
           </span>
           {round?.themeName && <span className={styles.theme}>{round.themeName}</span>}
         </p>
-        {host && <EndMatchButton />}
+        <RoomMenu snapshot={snapshot} />
       </div>
       {host && connected < MIN_PLAYERS && (
         <p role="status" className={styles.warning}>

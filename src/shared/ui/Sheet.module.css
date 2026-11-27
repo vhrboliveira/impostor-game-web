@@ -1,9 +1,4 @@
-.trigger {
-  min-height: 2.5rem;
-  padding: 0 var(--space-3);
-  font-size: var(--text-sm);
-}
-
+/* A bottom sheet over a dimmed backdrop: menus and confirmations, within thumb reach. */
 .backdrop {
   position: fixed;
   inset: 0;
@@ -39,6 +34,11 @@
 .sheet p {
   margin-bottom: var(--space-3);
   color: var(--color-text-muted);
+}
+
+/* The danger edge marks a sheet that confirms something hard to undo. */
+.sheet[data-tone='neutral'] {
+  border-top-color: var(--color-border);
 }
 
 @keyframes fade-in {

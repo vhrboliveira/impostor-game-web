@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { endpoints } from '@/shared/config/endpoints'
 import { useRoomStore } from './roomStore'
 import { SendContext } from './sendContext'
+import { SessionContext } from './sessionContext'
 import type { Send } from './sendContext'
 import { clearSession } from './session'
 import type { PlayerSession } from './session'
@@ -48,5 +49,9 @@ export function RoomConnection({ roomCode, session, children }: RoomConnectionPr
 
   const send = useCallback<Send>((message) => clientRef.current?.send(message), [])
 
-  return <SendContext.Provider value={send}>{children}</SendContext.Provider>
+  return (
+    <SendContext.Provider value={send}>
+      <SessionContext.Provider value={session}>{children}</SessionContext.Provider>
+    </SendContext.Provider>
+  )
 }

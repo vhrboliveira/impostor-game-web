@@ -17,8 +17,9 @@ const MAX_BACKOFF_MS = 10_000
 const LIVENESS_CHECK_MS = 3_000
 // Application close codes after which retrying is pointless (unauthorized, room not found).
 export const CLOSE_UNAUTHORIZED = 4401
+export const CLOSE_REMOVED = 4403
 export const CLOSE_ROOM_NOT_FOUND = 4404
-const FATAL_CLOSE_CODES = new Set([CLOSE_UNAUTHORIZED, CLOSE_ROOM_NOT_FOUND])
+const FATAL_CLOSE_CODES = new Set([CLOSE_UNAUTHORIZED, CLOSE_REMOVED, CLOSE_ROOM_NOT_FOUND])
 
 /**
  * Thin WebSocket wrapper: reconnects with exponential backoff, sends heartbeats and verifies the

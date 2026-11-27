@@ -12,7 +12,7 @@ interface RoomState {
   connectionStatus: ConnectionStatus
   snapshot: RoomSnapshot | null
   lastError: ServerError | null
-  /** Close code (4401 or 4404) when the server refused the connection for good. */
+  /** Close code (4401, 4403 or 4404) when the server refused the connection for good. */
   rejectedCode: number | null
   setConnectionStatus: (status: ConnectionStatus) => void
   applySnapshot: (snapshot: RoomSnapshot) => void

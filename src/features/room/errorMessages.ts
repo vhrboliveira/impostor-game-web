@@ -12,6 +12,8 @@ const messages: Record<string, string> = {
   invalid_rounds: 'Escolha um número de rodadas válido.',
   invalid_request: 'Não foi possível enviar os dados. Atualize a página e tente de novo.',
   request_too_large: 'Os dados enviados são grandes demais.',
+  unsupported_media_type: 'Não foi possível enviar os dados. Atualize a página e tente de novo.',
+  rate_limited: 'Muitas tentativas seguidas. Espere alguns segundos e tente de novo.',
   unauthorized: 'Sua sessão expirou. Entre na sala de novo.',
   invalid_avatar: 'Não deu para usar essa imagem. Tente outra foto.',
   avatar_locked: 'A foto só pode ser trocada no lobby.',
@@ -22,7 +24,8 @@ const messages: Record<string, string> = {
 const fallback = 'Algo deu errado. Tente novamente.'
 
 export function describeError(error: unknown): string {
-  if (error instanceof ApiError && error.code && error.code in messages) {
+  // Own keys only: an inherited key such as "constructor" is not a message.
+  if (error instanceof ApiError && error.code && Object.hasOwn(messages, error.code)) {
     return messages[error.code]
   }
   if (error instanceof Error && error.message === INVALID_IMAGE_CODE) {

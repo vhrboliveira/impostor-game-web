@@ -8,7 +8,6 @@ const messages: Record<string, string> = {
   not_participant: 'Você entra na próxima rodada.',
   theme_unavailable: 'Esse tema não tem mais palavras ou perguntas suficientes. Escolha outro.',
   invalid_vote: 'Vote em outro jogador da rodada.',
-  already_voted: 'Você já votou.',
   not_impostor: 'Só o impostor pode dar o palpite.',
   invalid_guess: 'Escolha uma das opções.',
   invalid_rounds: 'Escolha um número de rodadas válido.',
@@ -16,5 +15,6 @@ const messages: Record<string, string> = {
 }
 
 export function describeServerError(code: string): string {
-  return messages[code] ?? 'Algo deu errado. Tente novamente.'
+  // Own keys only: an inherited key such as "constructor" is not a message.
+  return Object.hasOwn(messages, code) ? messages[code] : 'Algo deu errado. Tente novamente.'
 }

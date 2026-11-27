@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import type { CSSProperties } from 'react'
 import voteSound from '@/assets/sounds/vote.mp3'
 import { HistoryViewer } from '@/features/history'
@@ -6,6 +6,7 @@ import { getPlayerAvatar, getPlayerName, isInRound, roundPlayerIds } from '@/rea
 import { useSend } from '@/realtime/sendContext'
 import { playSound, preloadSounds } from '@/shared/lib/sound'
 import { Avatar } from '@/shared/ui/Avatar'
+import { Button } from '@/shared/ui/Button'
 import { Choice } from '@/shared/ui/Choice'
 import { Countdown } from '@/shared/ui/Countdown'
 import { EmptyState } from '@/shared/ui/EmptyState'
@@ -15,10 +16,13 @@ import { Screen } from '@/shared/ui/Screen'
 import styles from './Voting.module.css'
 import type { PhaseProps } from './types'
 
-// Votes are final. The voting closes when every connected player of the round voted or when the
-// countdown ends; who voted for whom is only revealed in the result.
+// The player picks someone and confirms. Until the voting closes they can pick someone else and
+// confirm again ("Mudar voto"). The voting closes when every connected player of the round voted
+// or when the countdown ends; who voted for whom is only revealed in the result.
 export function Voting({ snapshot, round }: PhaseProps) {
   const send = useSend()
+  // The pick waiting for confirmation; starts on the confirmed vote, if any.
+  const [choice, setChoice] = useState<string | null>(snapshot.me.voteTargetId)
 
   useEffect(() => {
     preloadSounds([voteSound])
@@ -44,21 +48,31 @@ export function Voting({ snapshot, round }: PhaseProps) {
   }
 
   const votedFor = me.voteTargetId
+  const pending = choice !== null && choice !== votedFor
+
+  function confirm() {
+    if (choice === null || choice === votedFor) return
+    playSound(voteSound)
+    send({ type: 'vote', payload: { targetId: choice } })
+  }
 
   return (
     <Screen
       kicker="Votação"
       title="Quem é o impostor?"
-      subtitle="Seu voto é final."
+      subtitle="Escolha e confirme. Dá para trocar até todos votarem."
       aside={<Countdown deadlineAt={round.phaseDeadlineAt} />}
       footer={
         <>
           {bar}
           <p role="status" className={styles.status}>
             {votedFor
-              ? `Você votou em ${getPlayerName(players, votedFor)}. Aguardando os outros (${progress}).`
-              : `O voto não pode ser trocado (${progress}).`}
+              ? `Seu voto: ${getPlayerName(players, votedFor)}. Aguardando os outros (${progress}).`
+              : `Você ainda não votou (${progress}).`}
           </p>
+          <Button size="lg" fullWidth icon="check" disabled={!pending} onClick={confirm}>
+            {votedFor ? 'Mudar voto' : 'Confirmar voto'}
+          </Button>
         </>
       }
     >
@@ -66,16 +80,12 @@ export function Voting({ snapshot, round }: PhaseProps) {
         {candidates.map((id, index) => (
           <li key={id} style={{ '--i': index } as CSSProperties}>
             <Choice
-              selected={votedFor === id}
-              disabled={votedFor !== null}
+              selected={choice === id}
               leading={
                 <Avatar name={getPlayerName(players, id)} src={getPlayerAvatar(players, id)} />
               }
               trailing={votedFor === id ? <Icon name="check" size={22} /> : undefined}
-              onClick={() => {
-                playSound(voteSound)
-                send({ type: 'vote', payload: { targetId: id } })
-              }}
+              onClick={() => setChoice(id)}
             >
               {getPlayerName(players, id)}
             </Choice>

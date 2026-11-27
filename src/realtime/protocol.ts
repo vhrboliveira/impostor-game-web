@@ -10,7 +10,8 @@ import { z } from 'zod'
   - On every (re)connection the server sends a full `room_snapshot` first.
   - The snapshot only contains turns up to the current one, never future questions.
   - `me.secret` is null for the impostor.
-  - Close codes 4401 (unauthorized) and 4404 (room not found) are final.
+  - Close codes 4401 (unauthorized), 4403 (removed from the room) and 4404 (room not found) are
+    final.
 */
 
 export const phaseSchema = z.enum([
@@ -36,6 +37,8 @@ const playerSchema = z.object({
   score: z.number(),
   /** The player's photo (a versioned path under /api), null or absent without one. */
   avatarUrl: z.string().nullish(),
+  /** Left the room (or was removed): kept so the names of the round resolve, hidden in lists. */
+  hasLeft: z.boolean().optional(),
 })
 export type Player = z.infer<typeof playerSchema>
 
@@ -133,3 +136,5 @@ export type ClientMessage =
   | { type: 'next_round' }
   | { type: 'end_match' }
   | { type: 'play_again'; payload: { totalRounds: number } }
+  | { type: 'leave_room' }
+  | { type: 'remove_player'; payload: { playerId: string } }

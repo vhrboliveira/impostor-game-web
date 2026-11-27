@@ -34,3 +34,24 @@
   color: var(--color-text-muted);
   font-weight: 700;
 }
+
+/* The host's "remove" on another player's row: small, at the end, still a full tap target. */
+.remove {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: var(--tap-size);
+  height: var(--tap-size);
+  margin: calc(var(--space-2) * -1) calc(var(--space-2) * -1) calc(var(--space-2) * -1) 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.remove:active {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}

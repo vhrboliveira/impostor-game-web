@@ -6,9 +6,12 @@ export interface RankedPlayer {
   position: number
 }
 
-/** Orders players by score (ties keep the room order) and assigns competition-style positions. */
+/**
+ * Orders the players still in the room by score (ties keep the room order) and assigns
+ * competition-style positions. Who left is out of the scoreboard and the podium.
+ */
 export function rankPlayers(players: Player[]): RankedPlayer[] {
-  const sorted = [...players].sort((a, b) => b.score - a.score)
+  const sorted = players.filter((player) => !player.hasLeft).sort((a, b) => b.score - a.score)
   return sorted.map((player, index) => {
     const firstWithScore = sorted.findIndex((other) => other.score === player.score)
     return { player, position: (firstWithScore === -1 ? index : firstWithScore) + 1 }

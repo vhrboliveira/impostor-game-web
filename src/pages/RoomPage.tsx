@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import { isCompleteRoomCode } from '@/features/room/roomCode'
+import type { JoinResult } from '@/features/room/roomApi'
 import {
   ConnectionBanner,
   JoinRoomForm,
@@ -16,28 +18,37 @@ import { useRoomStore } from '@/realtime/roomStore'
 import { loadSession } from '@/realtime/session'
 import { Screen } from '@/shared/ui/Screen'
 import { WaitingDots } from '@/shared/ui/WaitingDots'
+import { NotFoundPage } from './NotFoundPage'
 import styles from './RoomPage.module.css'
 
 export function RoomPage() {
   const { code = '' } = useParams()
-  const roomCode = code.toUpperCase()
+  const roomCode = code.trim().toUpperCase()
+
+  // Only a well-formed code reaches the storage key, the socket URL and the screen.
+  if (!isCompleteRoomCode(roomCode)) return <NotFoundPage />
 
   // Keyed by room code so the session state resets when navigating to another room.
   return <RoomScreen key={roomCode} roomCode={roomCode} />
 }
 
 function RoomScreen({ roomCode }: { roomCode: string }) {
+  const navigate = useNavigate()
   const [session, setSession] = useState(() => loadSession(roomCode))
   const rejectedCode = useRoomStore((state) => state.rejectedCode)
+
+  // The forms let the player edit the code: the session belongs to the room actually joined, so a
+  // different room means moving to its page (which loads the session saved for it).
+  const entered = (result: JoinResult) => {
+    if (result.roomCode !== roomCode) navigate(`/room/${result.roomCode}`)
+    else setSession({ playerId: result.playerId, token: result.token })
+  }
 
   // Someone opened an invite link without having joined yet.
   if (!session) {
     return (
       <Screen kicker="Convite" title={`Entrar na sala ${roomCode}`}>
-        <JoinRoomForm
-          initialCode={roomCode}
-          onEntered={(result) => setSession({ playerId: result.playerId, token: result.token })}
-        />
+        <JoinRoomForm initialCode={roomCode} onEntered={entered} />
       </Screen>
     )
   }
@@ -45,11 +56,7 @@ function RoomScreen({ roomCode }: { roomCode: string }) {
   return (
     <RoomConnection roomCode={roomCode} session={session}>
       {rejectedCode !== null ? (
-        <RoomUnavailable
-          roomCode={roomCode}
-          closeCode={rejectedCode}
-          onRejoined={(result) => setSession({ playerId: result.playerId, token: result.token })}
-        />
+        <RoomUnavailable roomCode={roomCode} closeCode={rejectedCode} onRejoined={entered} />
       ) : (
         <>
           <ConnectionBanner />

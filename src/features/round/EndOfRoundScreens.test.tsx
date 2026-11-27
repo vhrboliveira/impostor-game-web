@@ -83,27 +83,41 @@ describe('Voting', () => {
     expect(screen.queryByRole('button', { name: 'Duda' })).not.toBeInTheDocument()
     expect(screen.getByRole('status')).toHaveTextContent('1/3 votaram')
 
+    const confirm = screen.getByRole('button', { name: 'Confirmar voto' })
+    expect(confirm).toBeDisabled()
     fireEvent.click(screen.getByRole('button', { name: 'Caio' }))
+    expect(send).not.toHaveBeenCalled()
+    expect(screen.getByRole('button', { name: 'Caio' })).toHaveAttribute('aria-pressed', 'true')
+    fireEvent.click(confirm)
     expect(send).toHaveBeenCalledWith({ type: 'vote', payload: { targetId: 'caio' } })
   })
 
-  it('plays the vote sound on the tap', () => {
+  it('plays the vote sound when confirming', () => {
     const play = vi.spyOn(HTMLMediaElement.prototype, 'play')
     play.mockClear()
     const round = makeRound({})
     renderWithSend(<Voting snapshot={makeSnapshot('bia', round)} round={round} />)
 
     fireEvent.click(screen.getByRole('button', { name: 'Caio' }))
+    expect(play).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmar voto' }))
     expect(play).toHaveBeenCalledTimes(1)
   })
 
-  it('locks the buttons after voting', () => {
+  it('lets the player change a confirmed vote', () => {
     const round = makeRound({ votedIds: ['bia'] })
-    renderWithSend(<Voting snapshot={makeSnapshot('bia', round, { vote: 'caio' })} round={round} />)
+    const send = renderWithSend(
+      <Voting snapshot={makeSnapshot('bia', round, { vote: 'caio' })} round={round} />,
+    )
 
     expect(screen.getByRole('button', { name: 'Caio' })).toHaveAttribute('aria-pressed', 'true')
-    expect(screen.getByRole('button', { name: 'Ana' })).toBeDisabled()
-    expect(screen.getByRole('status')).toHaveTextContent('Você votou em Caio')
+    expect(screen.getByRole('status')).toHaveTextContent('Seu voto: Caio')
+    const change = screen.getByRole('button', { name: 'Mudar voto' })
+    expect(change).toBeDisabled()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Ana' }))
+    fireEvent.click(change)
+    expect(send).toHaveBeenCalledWith({ type: 'vote', payload: { targetId: 'ana' } })
   })
 
   it('lets a player outside the round only watch', () => {
@@ -277,6 +291,16 @@ describe('MatchOver', () => {
 
     expect(screen.getByRole('heading', { name: 'Partida encerrada' })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Jogar de novo' })).not.toBeInTheDocument()
+  })
+})
+
+describe('rankPlayers without who left', () => {
+  it('leaves them out of the scoreboard and the podium', () => {
+    const ranked = rankPlayers([
+      { id: 'a', name: 'Ana', isHost: true, isConnected: true, score: 1 },
+      { id: 'b', name: 'Bia', isHost: false, isConnected: false, score: 9, hasLeft: true },
+    ])
+    expect(ranked.map((r) => r.player.name)).toEqual(['Ana'])
   })
 })
 

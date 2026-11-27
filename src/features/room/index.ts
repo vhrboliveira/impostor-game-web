@@ -1,6 +1,6 @@
 export { ConnectionBanner } from './ConnectionBanner'
 export { CreateRoomForm } from './CreateRoomForm'
-export { EndMatchButton } from './EndMatchButton'
+export { RoomMenu } from './RoomMenu'
 export { JoinRoomForm } from './JoinRoomForm'
 export { Lobby } from './Lobby'
 export { MatchBar } from './MatchBar'

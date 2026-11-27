@@ -91,7 +91,7 @@ describe('SocketClient', () => {
     client.close()
   })
 
-  it.each([4401, 4404])('stops for good after close code %i', (code) => {
+  it.each([4401, 4403, 4404])('stops for good after close code %i', (code) => {
     const { client, statuses, onRejected } = newClient()
     client.connect()
     FakeWebSocket.instances[0].serverOpens()

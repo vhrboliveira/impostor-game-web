@@ -1,2 +1,8 @@
 allowBuilds:
   esbuild: true
+
+# Build-time only (vite-plugin-pwa > workbox-build > glob): workbox-build still asks for glob 11,
+# whose glob and minimatch have moderate advisories (GHSA-g3hv-75wg-m249). glob keeps the same API
+# from 11 on; drop this once workbox-build moves past them.
+overrides:
+  glob: ^14.0.2
