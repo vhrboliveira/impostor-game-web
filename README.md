@@ -268,6 +268,11 @@ host must send these headers on every response:
 | `Permissions-Policy`                        | `camera=(self), microphone=(), geolocation=()`                                      |
 | `Cache-Control` on `sw.js` and `index.html` | `no-cache` (updates reach installed apps)                                           |
 
+The production image (`Dockerfile`: build with Node, serve with unprivileged nginx on port 8080)
+sends them from `nginx/security-headers.inc`, with long caching for the hashed `assets/` and
+`no-cache` for everything else; unknown paths get `index.html` (client-side routes). It is built
+and run by the server repository's `deploy/` stack, which serves the API on the same origin.
+
 The API and the WebSocket must be served over HTTPS/WSS too: the session token travels in the
 `Authorization` header and in the WebSocket query string (`?token=`), so the proxy in front of
 the API must not log that query string.

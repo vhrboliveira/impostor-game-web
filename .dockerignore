@@ -1,0 +1,11 @@
+.git
+.github
+node_modules
+dist
+dev-dist
+coverage
+# VITE_* variables are left empty in the image: the app talks to its own origin.
+.env
+.env.*
+.DS_Store
+*.local

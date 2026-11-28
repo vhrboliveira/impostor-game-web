@@ -2,3 +2,4 @@ dist
 dev-dist
 pnpm-lock.yaml
 public
+nginx

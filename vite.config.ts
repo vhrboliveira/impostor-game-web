@@ -1,14 +1,40 @@
 import { fileURLToPath, URL } from 'node:url'
 import react from '@vitejs/plugin-react'
+import { loadEnv } from 'vite'
+import type { Plugin } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import { defineConfig } from 'vitest/config'
+import { isMemeSound } from './src/pwa/cacheRoutes'
+import { contentSecurityPolicy } from './src/pwa/csp'
 
-export default defineConfig({
+// Production builds carry a Content Security Policy as a <meta> tag (the dev server needs inline
+// scripts for hot reload, so it is left out there).
+function cspMeta(mode: string): Plugin {
+  const env = loadEnv(mode, process.cwd(), 'VITE_')
+  const csp = contentSecurityPolicy({
+    apiBaseUrl: env.VITE_API_BASE_URL ?? '',
+    wsBaseUrl: env.VITE_WS_BASE_URL ?? '',
+  })
+  return {
+    name: 'csp-meta',
+    apply: 'build',
+    transformIndexHtml: () => [
+      {
+        tag: 'meta',
+        attrs: { 'http-equiv': 'Content-Security-Policy', content: csp },
+        injectTo: 'head-prepend',
+      },
+    ],
+  }
+}
+
+export default defineConfig(({ mode }) => ({
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
   plugins: [
     react(),
+    cspMeta(mode),
     VitePWA({
       // "prompt": the player decides when to reload, so a match is never interrupted.
       registerType: 'prompt',
@@ -47,7 +73,8 @@ export default defineConfig({
         globIgnores: ['**/node_modules/**/*', 'assets/memes/**'],
         runtimeCaching: [
           {
-            urlPattern: /\/assets\/memes\/[^/]+\.mp3$/,
+            // Matched on the path of same-origin requests only (see src/pwa/cacheRoutes.ts).
+            urlPattern: isMemeSound,
             handler: 'CacheFirst',
             options: {
               cacheName: 'meme-sounds',
@@ -81,4 +108,4 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts'],
     css: false,
   },
-})
+}))
